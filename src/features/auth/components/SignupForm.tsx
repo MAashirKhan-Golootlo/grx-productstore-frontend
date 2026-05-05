@@ -2,7 +2,7 @@
 
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { loginSchema, type LoginFormData } from '@/lib/validation';
+import { registerSchema, type RegisterFormData } from '@/lib/validation';
 import { useAuthActions } from '../hooks/useAuthActions';
 import {
   Form,
@@ -16,24 +16,26 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import Link from 'next/link';
-import { Mail, Lock } from 'lucide-react';
+import { User, Mail, Lock } from 'lucide-react';
 
-export function LoginForm() {
-  const { login, isLoading, error, clearError } = useAuthActions();
+export function SignupForm() {
+  const { register, isLoading, error } = useAuthActions();
 
-  const form = useForm<LoginFormData>({
-    resolver: yupResolver(loginSchema),
+  const form = useForm<RegisterFormData>({
+    resolver: yupResolver(registerSchema),
     defaultValues: {
+      name: '',
       email: '',
       password: '',
+      confirmPassword: '',
     },
   });
 
-  const onSubmit = async (data: LoginFormData) => {
+  const onSubmit = async (data: RegisterFormData) => {
     try {
-      await login(data);
+      await register(data);
     } catch (err) {
-      // Error is handled by the slice and accessible via useAuthActions
+      // Error is handled by the slice
     }
   };
 
@@ -47,6 +49,22 @@ export function LoginForm() {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Full Name</FormLabel>
+                <FormControl>
+                  <div className="relative">
+                    <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input placeholder="John Doe" disabled={isLoading} className="pl-10" {...field} />
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="email"
@@ -84,7 +102,30 @@ export function LoginForm() {
                     <Input
                       placeholder="••••••••"
                       type="password"
-                      autoComplete="current-password"
+                      autoComplete="new-password"
+                      disabled={isLoading}
+                      className="pl-10"
+                      {...field}
+                    />
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="confirmPassword"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Confirm Password</FormLabel>
+                <FormControl>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="••••••••"
+                      type="password"
+                      autoComplete="new-password"
                       disabled={isLoading}
                       className="pl-10"
                       {...field}
@@ -96,15 +137,15 @@ export function LoginForm() {
             )}
           />
           <Button className="w-full" type="submit" disabled={isLoading}>
-            {isLoading ? 'Signing in...' : 'Sign In'}
+            {isLoading ? 'Creating account...' : 'Create Account'}
           </Button>
         </form>
       </Form>
 
       <div className="text-center text-sm">
-        Don&apos;t have an account?{' '}
-        <Link href="/signup" className="underline underline-offset-4 hover:text-primary">
-          Sign up
+        Already have an account?{' '}
+        <Link href="/login" className="underline underline-offset-4 hover:text-primary">
+          Sign in
         </Link>
       </div>
     </div>
