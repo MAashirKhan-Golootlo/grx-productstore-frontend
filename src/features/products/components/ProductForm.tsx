@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { productSchema, type ProductFormData } from '@/lib/validation';
@@ -22,15 +23,20 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Category } from '@/types/category';
+import { uploadService } from '@/lib/api/uploads/services/uploadService';
 
 interface ProductFormProps {
-  onSubmit: (data: ProductFormData) => void;
+  onSubmit: (data: ProductFormData) => Promise<unknown> | unknown;
   categories: Category[];
   initialData?: Partial<ProductFormData>;
   isLoading?: boolean;
 }
 
 export function ProductForm({ onSubmit, categories, initialData, isLoading }: ProductFormProps) {
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(initialData?.imageUrl ?? null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+
   const form = useForm<ProductFormData>({
     resolver: yupResolver(productSchema) as any,
     defaultValues: {
@@ -40,12 +46,37 @@ export function ProductForm({ onSubmit, categories, initialData, isLoading }: Pr
       currency: initialData?.currency || 'PKR',
       categoryId: initialData?.categoryId || '',
       description: initialData?.description || '',
+      imageUrl: initialData?.imageUrl || '',
     },
   });
 
+  const handleFormSubmit = async (data: ProductFormData) => {
+    try {
+      setUploadError(null);
+      let imageUrl = data.imageUrl;
+
+      if (imageFile) {
+        const uploaded = await uploadService.uploadImage(imageFile);
+        imageUrl = uploaded.url;
+      }
+
+      await onSubmit({
+        ...data,
+        imageUrl,
+      });
+    } catch (error: any) {
+      if (error?.response?.data?.message) {
+        setUploadError(error.response.data.message);
+      } else {
+        setUploadError('Failed to upload image. Please try again.');
+      }
+      throw error;
+    }
+  };
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}
@@ -157,6 +188,33 @@ export function ProductForm({ onSubmit, categories, initialData, isLoading }: Pr
             </FormItem>
           )}
         />
+
+        <FormItem>
+          <FormLabel>Product Image</FormLabel>
+          <FormControl>
+            <Input
+              type="file"
+              accept="image/png,image/jpeg,image/jpg,image/webp"
+              onChange={(event) => {
+                const file = event.target.files?.[0] || null;
+                setImageFile(file);
+                if (file) {
+                  setImagePreview(URL.createObjectURL(file));
+                } else {
+                  setImagePreview(initialData?.imageUrl ?? null);
+                }
+              }}
+            />
+          </FormControl>
+          {imagePreview && (
+            <img
+              src={imagePreview}
+              alt="Product preview"
+              className="mt-2 h-24 w-24 rounded-md border object-cover"
+            />
+          )}
+          {uploadError && <FormMessage>{uploadError}</FormMessage>}
+        </FormItem>
 
         <Button type="submit" className="w-full" disabled={isLoading}>
           {isLoading ? 'Saving...' : 'Save Product'}

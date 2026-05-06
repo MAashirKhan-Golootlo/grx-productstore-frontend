@@ -6,6 +6,7 @@ export interface Product {
   sku: string;
   name: string;
   description?: string;
+  imageUrl?: string;
   basePrice: number;
   price?: number;
   currency: string;
@@ -23,6 +24,7 @@ export interface CreateProductDto {
   sku: string;
   name: string;
   description?: string;
+  imageUrl?: string;
   basePrice: number;
   price?: number;
   currency: string;
