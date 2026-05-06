@@ -1,19 +1,20 @@
+import type { RecordStatus } from '../auth';
+
 export interface Category {
   id: string;
-  name: string;
   slug: string;
+  name: string;
+  status: RecordStatus;
   description?: string;
-  isActive: boolean;
+  isActive?: boolean;
   productCount?: number;
   createdAt: string;
   updatedAt: string;
 }
 
 export interface CreateCategoryDto {
-  name: string;
   slug: string;
-  description?: string;
-  isActive: boolean;
+  name: string;
 }
 
 export interface UpdateCategoryDto extends Partial<CreateCategoryDto> {}

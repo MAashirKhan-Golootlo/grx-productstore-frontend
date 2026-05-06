@@ -5,6 +5,9 @@ import categoryReducer from '../slices/categorySlice';
 import productReducer from '../slices/productSlice';
 import userReducer from '../slices/userSlice';
 import orderReducer from '../slices/orderSlice';
+import tenantReducer from '../slices/tenantSlice';
+import partnerReducer from '../slices/partnerSlice';
+import partnerProductReducer from '../slices/partnerProductSlice';
 
 export const store = configureStore({
   reducer: {
@@ -13,6 +16,9 @@ export const store = configureStore({
     products: productReducer,
     users: userReducer,
     orders: orderReducer,
+    tenants: tenantReducer,
+    partners: partnerReducer,
+    partnerProducts: partnerProductReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

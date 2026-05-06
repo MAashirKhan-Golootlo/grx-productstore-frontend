@@ -1,11 +1,7 @@
 'use client';
 
-import { useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { fetchProductById, updateProduct } from '@/redux/slices/productSlice';
-import { fetchCategories } from '@/redux/slices/categorySlice';
-import { ProductForm } from '@/features/products';
+import { ProductForm, useProductEditor } from '@/features/products';
 import { ProductFormData } from '@/lib/validation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -14,23 +10,13 @@ import { Skeleton } from '@/components/ui/skeleton';
 export default function EditProductPage() {
   const router = useRouter();
   const { id } = useParams() as { id: string };
-  const dispatch = useAppDispatch();
-  
-  const { selected: product, isLoading, error } = useAppSelector((state) => state.products);
-  const { items: categories } = useAppSelector((state) => state.categories);
-
-  useEffect(() => {
-    if (id) {
-      dispatch(fetchProductById(id));
-      dispatch(fetchCategories());
-    }
-  }, [dispatch, id]);
+  const { product, categories, isLoading, isSubmitting, error, update } = useProductEditor(id);
 
   const onSubmit = async (data: ProductFormData) => {
     try {
-      await dispatch(updateProduct({ id, data })).unwrap();
+      await update(data);
       router.push('/products');
-    } catch (err) {
+    } catch {
       // Error handled by Redux
     }
   };
@@ -79,15 +65,14 @@ export default function EditProductPage() {
             <ProductForm 
               onSubmit={onSubmit} 
               categories={categories}
-              isLoading={isLoading} 
+              isLoading={isSubmitting} 
               initialData={{
                 name: product.name,
                 sku: product.sku,
                 price: product.price,
-                stock: product.stock,
+                currency: product.currency,
                 categoryId: product.categoryId,
                 description: product.description,
-                isActive: product.isActive,
               }} 
             />
           )}

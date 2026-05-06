@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { categorySchema, type CategoryFormData } from '@/lib/validation';
@@ -13,13 +14,20 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
 
 interface CategoryFormProps {
   onSubmit: (data: CategoryFormData) => void;
   initialData?: Partial<CategoryFormData>;
   isLoading?: boolean;
+}
+
+function toSlug(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-');
 }
 
 export function CategoryForm({ onSubmit, initialData, isLoading }: CategoryFormProps) {
@@ -28,10 +36,20 @@ export function CategoryForm({ onSubmit, initialData, isLoading }: CategoryFormP
     defaultValues: {
       name: initialData?.name || '',
       slug: initialData?.slug || '',
-      description: initialData?.description || '',
-      isActive: initialData?.isActive ?? true,
     },
   });
+
+  const nameValue = form.watch('name');
+
+  useEffect(() => {
+    const nextSlug = toSlug(nameValue || '');
+    const initialNameSlug = toSlug(initialData?.name || '');
+    const currentSlug = form.getValues('slug');
+
+    if (!initialData?.slug || currentSlug === initialNameSlug || currentSlug === '') {
+      form.setValue('slug', nextSlug, { shouldValidate: true });
+    }
+  }, [form, initialData?.name, initialData?.slug, nameValue]);
 
   return (
     <Form {...form}>
@@ -56,39 +74,9 @@ export function CategoryForm({ onSubmit, initialData, isLoading }: CategoryFormP
             <FormItem>
               <FormLabel>Slug</FormLabel>
               <FormControl>
-                <Input placeholder="electronics" {...field} />
+                <Input placeholder="slug" {...field} readOnly />
               </FormControl>
               <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Textarea placeholder="Category description..." {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="isActive"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-              <div className="space-y-0.5">
-                <FormLabel className="text-base">Active</FormLabel>
-              </div>
-              <FormControl>
-                <Switch
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
             </FormItem>
           )}
         />

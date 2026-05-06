@@ -1,7 +1,29 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { authService } from '@/lib/api/auth/services/authService';
-import type { AuthState, LoginCredentials, RegisterCredentials, User } from '@/types/auth';
+import type {
+  AuthState,
+  AuthTokenResponse,
+  LoginCredentials,
+  RegisterCredentials,
+} from '@/types/auth';
 import { STORAGE_KEYS } from '@/constants';
+
+const SESSION_COOKIE_KEY = 'session_token';
+const SESSION_COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24; // 1 day
+
+const setSessionCookie = (token: string): void => {
+  if (typeof document === 'undefined') {
+    return;
+  }
+  document.cookie = `${SESSION_COOKIE_KEY}=${encodeURIComponent(token)}; path=/; max-age=${SESSION_COOKIE_MAX_AGE_SECONDS}; samesite=lax`;
+};
+
+const clearSessionCookie = (): void => {
+  if (typeof document === 'undefined') {
+    return;
+  }
+  document.cookie = `${SESSION_COOKIE_KEY}=; path=/; max-age=0; samesite=lax`;
+};
 
 const initialState: AuthState & { error: string | null } = {
   user: null,
@@ -16,8 +38,8 @@ export const login = createAsyncThunk(
   async (credentials: LoginCredentials, { rejectWithValue }) => {
     try {
       const response = await authService.login(credentials);
-      localStorage.setItem(STORAGE_KEYS.TOKEN, response.token);
-      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(response.user));
+      localStorage.setItem(STORAGE_KEYS.TOKEN, response.accessToken);
+      setSessionCookie(response.accessToken);
       return response;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Login failed');
@@ -30,8 +52,8 @@ export const register = createAsyncThunk(
   async (credentials: RegisterCredentials, { rejectWithValue }) => {
     try {
       const response = await authService.register(credentials);
-      localStorage.setItem(STORAGE_KEYS.TOKEN, response.token);
-      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(response.user));
+      localStorage.setItem(STORAGE_KEYS.TOKEN, response.accessToken);
+      setSessionCookie(response.accessToken);
       return response;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Registration failed');
@@ -40,12 +62,9 @@ export const register = createAsyncThunk(
 );
 
 export const logout = createAsyncThunk('auth/logout', async () => {
-  try {
-    await authService.logout();
-  } finally {
-    localStorage.removeItem(STORAGE_KEYS.TOKEN);
-    localStorage.removeItem(STORAGE_KEYS.USER);
-  }
+  localStorage.removeItem(STORAGE_KEYS.TOKEN);
+  localStorage.removeItem(STORAGE_KEYS.USER);
+  clearSessionCookie();
 });
 
 const authSlice = createSlice({
@@ -55,10 +74,11 @@ const authSlice = createSlice({
     hydrateAuth(state) {
       const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
       const userStr = localStorage.getItem(STORAGE_KEYS.USER);
-      if (token && userStr) {
+      if (token) {
         state.token = token;
-        state.user = JSON.parse(userStr);
+        state.user = userStr ? JSON.parse(userStr) : null;
         state.isAuthenticated = true;
+        setSessionCookie(token);
       }
     },
     clearError(state) {
@@ -72,11 +92,11 @@ const authSlice = createSlice({
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(login.fulfilled, (state, action: PayloadAction<{ user: User; token: string }>) => {
+      .addCase(login.fulfilled, (state, action: PayloadAction<AuthTokenResponse>) => {
         state.isLoading = false;
         state.isAuthenticated = true;
-        state.user = action.payload.user;
-        state.token = action.payload.token;
+        state.user = null;
+        state.token = action.payload.accessToken;
       })
       .addCase(login.rejected, (state, action) => {
         state.isLoading = false;
@@ -87,11 +107,11 @@ const authSlice = createSlice({
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(register.fulfilled, (state, action: PayloadAction<{ user: User; token: string }>) => {
+      .addCase(register.fulfilled, (state, action: PayloadAction<AuthTokenResponse>) => {
         state.isLoading = false;
         state.isAuthenticated = true;
-        state.user = action.payload.user;
-        state.token = action.payload.token;
+        state.user = null;
+        state.token = action.payload.accessToken;
       })
       .addCase(register.rejected, (state, action) => {
         state.isLoading = false;

@@ -5,7 +5,10 @@ import {
   Tag, 
   Package, 
   Users, 
-  ShoppingCart 
+  ShoppingCart,
+  Building2,
+  Handshake,
+  Link2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -15,6 +18,9 @@ const navItems = [
   { name: 'Products', href: '/products', icon: Package },
   { name: 'Users', href: '/users', icon: Users },
   { name: 'Orders', href: '/orders', icon: ShoppingCart },
+  { name: 'Tenants', href: '/tenants', icon: Building2 },
+  { name: 'Partners', href: '/partners', icon: Handshake },
+  { name: 'Partner Products', href: '/partner-products', icon: Link2 },
 ];
 
 export function Sidebar() {
@@ -31,7 +37,7 @@ export function Sidebar() {
                   "group flex items-center rounded-md px-2 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground"
                 )}
               >
-                <item.icon className="mr-3 h-5 w-5 flex-shrink-0" aria-hidden="true" />
+                <item.icon className="mr-3 h-5 w-5 shrink-0" aria-hidden="true" />
                 {item.name}
               </Link>
             ))}

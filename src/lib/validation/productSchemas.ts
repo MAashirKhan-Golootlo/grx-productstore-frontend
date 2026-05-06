@@ -15,16 +15,13 @@ export const productSchema = yup.object().shape({
     .typeError('Price must be a number')
     .positive('Price must be positive')
     .required('Price is required'),
-  stock: yup
-    .number()
-    .typeError('Stock must be a number')
-    .integer('Stock must be an integer')
-    .min(0, 'Stock cannot be negative')
-    .required('Stock is required'),
+  currency: yup
+    .string()
+    .length(3, 'Currency must be a 3-letter code')
+    .uppercase('Currency must be uppercase')
+    .required('Currency is required'),
   categoryId: yup.string().required('Category is required'),
   description: yup.string().max(500, 'Description must be at most 500 characters').optional(),
-  isActive: yup.boolean().default(true),
-  images: yup.array().of(yup.string().url('Must be a valid URL')).optional(),
 });
 
 export type ProductFormData = yup.InferType<typeof productSchema>;

@@ -5,14 +5,16 @@ import { Product, CreateProductDto, UpdateProductDto } from '@/types/product';
 interface ProductState {
   items: Product[];
   selected: Product | null;
-  isLoading: boolean;
+  isListLoading: boolean;
+  isFormSubmitting: boolean;
   error: string | null;
 }
 
 const initialState: ProductState = {
   items: [],
   selected: null,
-  isLoading: false,
+  isListLoading: false,
+  isFormSubmitting: false,
   error: null,
 };
 
@@ -48,15 +50,6 @@ export const updateProduct = createAsyncThunk('products/update', async ({ id, da
   }
 });
 
-export const deleteProduct = createAsyncThunk('products/delete', async (id: string, { rejectWithValue }) => {
-  try {
-    await productService.delete(id);
-    return id;
-  } catch (error: any) {
-    return rejectWithValue(error.response?.data?.message || 'Failed to delete product');
-  }
-});
-
 const productSlice = createSlice({
   name: 'products',
   initialState,
@@ -71,33 +64,47 @@ const productSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchProducts.pending, (state) => {
-        state.isLoading = true;
+        state.isListLoading = true;
         state.error = null;
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
-        state.isLoading = false;
+        state.isListLoading = false;
         state.items = action.payload;
       })
       .addCase(fetchProducts.rejected, (state, action) => {
-        state.isLoading = false;
+        state.isListLoading = false;
         state.error = action.payload as string;
       })
       .addCase(fetchProductById.pending, (state) => {
-        state.isLoading = true;
+        state.isListLoading = true;
         state.error = null;
       })
       .addCase(fetchProductById.fulfilled, (state, action) => {
-        state.isLoading = false;
+        state.isListLoading = false;
         state.selected = action.payload;
       })
       .addCase(fetchProductById.rejected, (state, action) => {
-        state.isLoading = false;
+        state.isListLoading = false;
         state.error = action.payload as string;
       })
+      .addCase(createProduct.pending, (state) => {
+        state.isFormSubmitting = true;
+        state.error = null;
+      })
       .addCase(createProduct.fulfilled, (state, action) => {
+        state.isFormSubmitting = false;
         state.items.push(action.payload);
       })
+      .addCase(createProduct.rejected, (state, action) => {
+        state.isFormSubmitting = false;
+        state.error = action.payload as string;
+      })
+      .addCase(updateProduct.pending, (state) => {
+        state.isFormSubmitting = true;
+        state.error = null;
+      })
       .addCase(updateProduct.fulfilled, (state, action) => {
+        state.isFormSubmitting = false;
         const index = state.items.findIndex((item) => item.id === action.payload.id);
         if (index !== -1) {
           state.items[index] = action.payload;
@@ -106,8 +113,9 @@ const productSlice = createSlice({
           state.selected = action.payload;
         }
       })
-      .addCase(deleteProduct.fulfilled, (state, action) => {
-        state.items = state.items.filter((item) => item.id !== action.payload);
+      .addCase(updateProduct.rejected, (state, action) => {
+        state.isFormSubmitting = false;
+        state.error = action.payload as string;
       });
   },
 });

@@ -1,4 +1,4 @@
-import { User } from '../auth';
+import type { User } from '../auth';
 
 export enum UserRole {
   ADMIN = 'ADMIN',
@@ -7,19 +7,24 @@ export enum UserRole {
 }
 
 export interface ManagedUser extends User {
-  role: UserRole;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
+  name?: string;
+  role?: UserRole;
+  isActive?: boolean;
 }
 
 export interface CreateUserDto {
-  name: string;
   email: string;
-  role: UserRole;
+  fullName?: string;
+  name?: string;
   password?: string;
+  role?: UserRole;
+  isActive?: boolean;
 }
 
-export interface UpdateUserDto extends Partial<CreateUserDto> {
+export interface UpdateUserDto {
+  email?: string;
+  fullName?: string;
+  name?: string;
+  role?: UserRole;
   isActive?: boolean;
 }

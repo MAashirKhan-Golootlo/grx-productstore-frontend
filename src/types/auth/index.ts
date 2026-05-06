@@ -1,9 +1,13 @@
-// Auth-related types
+export type RecordStatus = 'active' | 'inactive';
+
 export interface User {
   id: string;
   email: string;
-  name: string;
-  // Add other user fields as needed
+  fullName: string;
+  name?: string;
+  status: RecordStatus;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface AuthState {
@@ -21,6 +25,9 @@ export interface LoginCredentials {
 export interface RegisterCredentials {
   email: string;
   password: string;
-  name: string;
+  fullName: string;
 }
 
+export interface AuthTokenResponse {
+  accessToken: string;
+}

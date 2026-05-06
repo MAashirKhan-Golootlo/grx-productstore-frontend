@@ -1,29 +1,32 @@
-import { Category } from '../category';
+import type { RecordStatus } from '../auth';
+import type { Category } from '../category';
 
 export interface Product {
   id: string;
-  name: string;
   sku: string;
+  name: string;
   description?: string;
-  price: number;
-  stock: number;
-  isActive: boolean;
+  basePrice: number;
+  price?: number;
+  currency: string;
+  status: RecordStatus;
+  isActive?: boolean;
+  stock?: number;
+  images?: (string | undefined)[];
   categoryId: string;
   category?: Category;
-  images: string[];
   createdAt: string;
   updatedAt: string;
 }
 
 export interface CreateProductDto {
-  name: string;
   sku: string;
+  name: string;
   description?: string;
-  price: number;
-  stock: number;
-  isActive: boolean;
+  basePrice: number;
+  price?: number;
+  currency: string;
   categoryId: string;
-  images?: string[];
 }
 
 export interface UpdateProductDto extends Partial<CreateProductDto> {}

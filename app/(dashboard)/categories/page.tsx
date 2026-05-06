@@ -1,26 +1,24 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { fetchCategories, deleteCategory } from '@/redux/slices/categorySlice';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useCategoriesList } from '@/features/categories';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus, Edit, Trash2 } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Plus, Edit } from 'lucide-react';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import Link from 'next/link';
 
 export default function CategoriesPage() {
-  const dispatch = useAppDispatch();
-  const { items, isLoading } = useAppSelector((state) => state.categories);
-
-  useEffect(() => {
-    dispatch(fetchCategories());
-  }, [dispatch]);
-
-  const handleDelete = async (id: string) => {
-    if (confirm('Are you sure you want to delete this category?')) {
-      await dispatch(deleteCategory(id));
-    }
-  };
+  const { items, isLoading, error } = useCategoriesList();
 
   return (
     <div className="space-y-6">
@@ -33,38 +31,58 @@ export default function CategoriesPage() {
         </Button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {isLoading && items.length === 0 ? (
-          <p>Loading...</p>
-        ) : (
-          items.map((category) => (
-            <Card key={category.id}>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0">
-                <CardTitle>{category.name}</CardTitle>
-                <div className="flex space-x-2">
-                  <Button variant="ghost" size="icon" asChild>
-                    <Link href={`/categories/${category.id}/edit`}>
-                      <Edit className="h-4 w-4" />
-                    </Link>
-                  </Button>
-                  <Button variant="ghost" size="icon" onClick={() => handleDelete(category.id)}>
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground line-clamp-2">{category.description || 'No description'}</p>
-                <div className="mt-4 flex items-center justify-between">
-                  <span className={`text-xs px-2 py-1 rounded-full ${category.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                    {category.isActive ? 'Active' : 'Inactive'}
-                  </span>
-                  <span className="text-xs text-muted-foreground">{category.productCount || 0} Products</span>
-                </div>
-              </CardContent>
-            </Card>
-          ))
-        )}
-      </div>
+      {error && (
+        <Alert variant="destructive">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
+      <Card>
+        <CardContent className="pt-6">
+          {isLoading ? (
+            <div className="space-y-2">
+              {Array.from({ length: 6 }).map((_, index) => (
+                <Skeleton key={`category-row-skeleton-${index}`} className="h-10 w-full" />
+              ))}
+            </div>
+          ) : items.length === 0 ? (
+            <div className="py-10 text-center text-sm text-muted-foreground">
+              No categories found.
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Slug</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="w-[80px]">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {items.map((category) => (
+                  <TableRow key={category.id}>
+                    <TableCell className="font-medium">{category.name}</TableCell>
+                    <TableCell>{category.slug}</TableCell>
+                    <TableCell>
+                      <Badge variant={category.status === 'active' ? 'secondary' : 'outline'}>
+                        {category.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Button variant="ghost" size="icon" asChild>
+                        <Link href={`/categories/${category.id}/edit`}>
+                          <Edit className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

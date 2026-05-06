@@ -1,9 +1,9 @@
 // Common types used across the application
 export interface ApiResponse<T> {
   success: boolean;
+  path: string;
+  timestamp: string;
   data: T;
-  message?: string;
-  error?: string;
 }
 
 export interface PaginationParams {

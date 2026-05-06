@@ -1,10 +1,7 @@
 'use client';
 
-import { useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { fetchCategoryById, updateCategory } from '@/redux/slices/categorySlice';
-import { CategoryForm } from '@/features/categories';
+import { CategoryForm, useCategoryEditor } from '@/features/categories';
 import { CategoryFormData } from '@/lib/validation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -13,20 +10,13 @@ import { Skeleton } from '@/components/ui/skeleton';
 export default function EditCategoryPage() {
   const router = useRouter();
   const { id } = useParams() as { id: string };
-  const dispatch = useAppDispatch();
-  const { selected: category, isLoading, error } = useAppSelector((state) => state.categories);
-
-  useEffect(() => {
-    if (id) {
-      dispatch(fetchCategoryById(id));
-    }
-  }, [dispatch, id]);
+  const { category, isLoading, isSubmitting, error, update } = useCategoryEditor(id);
 
   const onSubmit = async (data: CategoryFormData) => {
     try {
-      await dispatch(updateCategory({ id, data })).unwrap();
+      await update(data);
       router.push('/categories');
-    } catch (err) {
+    } catch {
       // Error handled by Redux
     }
   };
@@ -42,7 +32,6 @@ export default function EditCategoryPage() {
           <CardContent className="space-y-4">
             <Skeleton className="h-10 w-full" />
             <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-24 w-full" />
           </CardContent>
         </Card>
       </div>
@@ -67,12 +56,10 @@ export default function EditCategoryPage() {
           {category && (
             <CategoryForm 
               onSubmit={onSubmit} 
-              isLoading={isLoading} 
+              isLoading={isSubmitting} 
               initialData={{
                 name: category.name,
                 slug: category.slug,
-                description: category.description,
-                isActive: category.isActive,
               }} 
             />
           )}

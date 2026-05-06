@@ -14,7 +14,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
 import {
   Select,
   SelectContent,
@@ -38,10 +37,9 @@ export function ProductForm({ onSubmit, categories, initialData, isLoading }: Pr
       name: initialData?.name || '',
       sku: initialData?.sku || '',
       price: initialData?.price || 0,
-      stock: initialData?.stock || 0,
+      currency: initialData?.currency || 'PKR',
       categoryId: initialData?.categoryId || '',
       description: initialData?.description || '',
-      isActive: initialData?.isActive ?? true,
     },
   });
 
@@ -99,18 +97,22 @@ export function ProductForm({ onSubmit, categories, initialData, isLoading }: Pr
           />
           <FormField
             control={form.control}
-            name="stock"
+            name="currency"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Stock</FormLabel>
-                <FormControl>
-                  <Input 
-                    type="number" 
-                    placeholder="50" 
-                    {...field} 
-                    onChange={(e) => field.onChange(parseInt(e.target.value))}
-                  />
-                </FormControl>
+                <FormLabel>Currency</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select currency" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="PKR">PKR</SelectItem>
+                    <SelectItem value="USD">USD</SelectItem>
+                    <SelectItem value="AED">AED</SelectItem>
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
@@ -152,24 +154,6 @@ export function ProductForm({ onSubmit, categories, initialData, isLoading }: Pr
                 <Textarea placeholder="Product details..." {...field} />
               </FormControl>
               <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="isActive"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-              <div className="space-y-0.5">
-                <FormLabel className="text-base">Available for Sale</FormLabel>
-              </div>
-              <FormControl>
-                <Switch
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
             </FormItem>
           )}
         />

@@ -1,24 +1,14 @@
 import axiosInstance from '../../axios.config';
-import type { LoginCredentials, RegisterCredentials, User } from '@/types/auth';
+import type { AuthTokenResponse, LoginCredentials, RegisterCredentials } from '@/types/auth';
+import { API_ENDPOINTS } from '@/constants';
 
 export const authService = {
-  async login(credentials: LoginCredentials): Promise<{ user: User; token: string }> {
-    const response = await axiosInstance.post('/auth/login', credentials);
-    return response.data;
+  async login(credentials: LoginCredentials): Promise<AuthTokenResponse> {
+    return (await axiosInstance.post(API_ENDPOINTS.AUTH.LOGIN, credentials)) as unknown as AuthTokenResponse;
   },
 
-  async register(credentials: RegisterCredentials): Promise<{ user: User; token: string }> {
-    const response = await axiosInstance.post('/auth/register', credentials);
-    return response.data;
-  },
-
-  async logout(): Promise<void> {
-    await axiosInstance.post('/auth/logout');
-  },
-
-  async getCurrentUser(): Promise<User> {
-    const response = await axiosInstance.get('/auth/me');
-    return response.data;
+  async register(credentials: RegisterCredentials): Promise<AuthTokenResponse> {
+    return (await axiosInstance.post(API_ENDPOINTS.AUTH.SIGNUP, credentials)) as unknown as AuthTokenResponse;
   },
 };
 

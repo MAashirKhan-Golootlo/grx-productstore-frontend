@@ -1,30 +1,20 @@
 'use client';
 
-import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { createProduct } from '@/redux/slices/productSlice';
-import { fetchCategories } from '@/redux/slices/categorySlice';
-import { ProductForm } from '@/features/products';
+import { ProductForm, useProductEditor } from '@/features/products';
 import { ProductFormData } from '@/lib/validation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export default function NewProductPage() {
   const router = useRouter();
-  const dispatch = useAppDispatch();
-  const { isLoading, error } = useAppSelector((state) => state.products);
-  const { items: categories } = useAppSelector((state) => state.categories);
-
-  useEffect(() => {
-    dispatch(fetchCategories());
-  }, [dispatch]);
+  const { categories, isSubmitting, error, create } = useProductEditor();
 
   const onSubmit = async (data: ProductFormData) => {
     try {
-      await dispatch(createProduct(data)).unwrap();
+      await create(data);
       router.push('/products');
-    } catch (err) {
+    } catch {
       // Error handled by Redux
     }
   };
@@ -47,7 +37,7 @@ export default function NewProductPage() {
           <ProductForm 
             onSubmit={onSubmit} 
             categories={categories} 
-            isLoading={isLoading} 
+            isLoading={isSubmitting} 
           />
         </CardContent>
       </Card>

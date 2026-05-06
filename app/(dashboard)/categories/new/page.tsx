@@ -1,23 +1,20 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { createCategory } from '@/redux/slices/categorySlice';
-import { CategoryForm } from '@/features/categories';
+import { CategoryForm, useCategoryEditor } from '@/features/categories';
 import { CategoryFormData } from '@/lib/validation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export default function NewCategoryPage() {
   const router = useRouter();
-  const dispatch = useAppDispatch();
-  const { isLoading, error } = useAppSelector((state) => state.categories);
+  const { create, isSubmitting, error } = useCategoryEditor();
 
   const onSubmit = async (data: CategoryFormData) => {
     try {
-      await dispatch(createCategory(data)).unwrap();
+      await create(data);
       router.push('/categories');
-    } catch (err) {
+    } catch {
       // Error handled by Redux
     }
   };
@@ -37,7 +34,7 @@ export default function NewCategoryPage() {
           <CardTitle>Category Details</CardTitle>
         </CardHeader>
         <CardContent>
-          <CategoryForm onSubmit={onSubmit} isLoading={isLoading} />
+          <CategoryForm onSubmit={onSubmit} isLoading={isSubmitting} />
         </CardContent>
       </Card>
     </div>

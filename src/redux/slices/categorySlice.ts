@@ -5,14 +5,16 @@ import { Category, CreateCategoryDto, UpdateCategoryDto } from '@/types/category
 interface CategoryState {
   items: Category[];
   selected: Category | null;
-  isLoading: boolean;
+  isListLoading: boolean;
+  isFormSubmitting: boolean;
   error: string | null;
 }
 
 const initialState: CategoryState = {
   items: [],
   selected: null,
-  isLoading: false,
+  isListLoading: false,
+  isFormSubmitting: false,
   error: null,
 };
 
@@ -48,15 +50,6 @@ export const updateCategory = createAsyncThunk('categories/update', async ({ id,
   }
 });
 
-export const deleteCategory = createAsyncThunk('categories/delete', async (id: string, { rejectWithValue }) => {
-  try {
-    await categoryService.delete(id);
-    return id;
-  } catch (error: any) {
-    return rejectWithValue(error.response?.data?.message || 'Failed to delete category');
-  }
-});
-
 const categorySlice = createSlice({
   name: 'categories',
   initialState,
@@ -71,33 +64,47 @@ const categorySlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchCategories.pending, (state) => {
-        state.isLoading = true;
+        state.isListLoading = true;
         state.error = null;
       })
       .addCase(fetchCategories.fulfilled, (state, action) => {
-        state.isLoading = false;
+        state.isListLoading = false;
         state.items = action.payload;
       })
       .addCase(fetchCategories.rejected, (state, action) => {
-        state.isLoading = false;
+        state.isListLoading = false;
         state.error = action.payload as string;
       })
       .addCase(fetchCategoryById.pending, (state) => {
-        state.isLoading = true;
+        state.isListLoading = true;
         state.error = null;
       })
       .addCase(fetchCategoryById.fulfilled, (state, action) => {
-        state.isLoading = false;
+        state.isListLoading = false;
         state.selected = action.payload;
       })
       .addCase(fetchCategoryById.rejected, (state, action) => {
-        state.isLoading = false;
+        state.isListLoading = false;
         state.error = action.payload as string;
       })
+      .addCase(createCategory.pending, (state) => {
+        state.isFormSubmitting = true;
+        state.error = null;
+      })
       .addCase(createCategory.fulfilled, (state, action) => {
+        state.isFormSubmitting = false;
         state.items.push(action.payload);
       })
+      .addCase(createCategory.rejected, (state, action) => {
+        state.isFormSubmitting = false;
+        state.error = action.payload as string;
+      })
+      .addCase(updateCategory.pending, (state) => {
+        state.isFormSubmitting = true;
+        state.error = null;
+      })
       .addCase(updateCategory.fulfilled, (state, action) => {
+        state.isFormSubmitting = false;
         const index = state.items.findIndex((item) => item.id === action.payload.id);
         if (index !== -1) {
           state.items[index] = action.payload;
@@ -106,8 +113,9 @@ const categorySlice = createSlice({
           state.selected = action.payload;
         }
       })
-      .addCase(deleteCategory.fulfilled, (state, action) => {
-        state.items = state.items.filter((item) => item.id !== action.payload);
+      .addCase(updateCategory.rejected, (state, action) => {
+        state.isFormSubmitting = false;
+        state.error = action.payload as string;
       });
   },
 });

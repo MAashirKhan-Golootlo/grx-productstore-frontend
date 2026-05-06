@@ -1,11 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { orderService } from '@/lib/api/orders/services/orderService';
-import { Order, OrderStatus } from '@/types/order';
+import { CreateOrderDto, Order, OrderStatus } from '@/types/order';
 
 interface OrderState {
   items: Order[];
   selected: Order | null;
   isLoading: boolean;
+  isSubmitting: boolean;
   error: string | null;
 }
 
@@ -13,6 +14,7 @@ const initialState: OrderState = {
   items: [],
   selected: null,
   isLoading: false,
+  isSubmitting: false,
   error: null,
 };
 
@@ -37,6 +39,14 @@ export const updateOrderStatus = createAsyncThunk('orders/updateStatus', async (
     return await orderService.updateStatus(id, status);
   } catch (error: any) {
     return rejectWithValue(error.response?.data?.message || 'Failed to update order status');
+  }
+});
+
+export const createOrder = createAsyncThunk('orders/create', async (data: CreateOrderDto, { rejectWithValue }) => {
+  try {
+    return await orderService.create(data);
+  } catch (error: any) {
+    return rejectWithValue(error.response?.data?.message || 'Failed to create order');
   }
 });
 
@@ -75,6 +85,18 @@ const orderSlice = createSlice({
       })
       .addCase(fetchOrderById.rejected, (state, action) => {
         state.isLoading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(createOrder.pending, (state) => {
+        state.isSubmitting = true;
+        state.error = null;
+      })
+      .addCase(createOrder.fulfilled, (state, action) => {
+        state.isSubmitting = false;
+        state.items.unshift(action.payload);
+      })
+      .addCase(createOrder.rejected, (state, action) => {
+        state.isSubmitting = false;
         state.error = action.payload as string;
       })
       .addCase(updateOrderStatus.fulfilled, (state, action) => {

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import type { ApiResponse } from '@/types/common';
 
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api',
@@ -25,7 +26,13 @@ axiosInstance.interceptors.request.use(
 
 // Response interceptor
 axiosInstance.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    const envelope = response.data as ApiResponse<unknown>;
+    if (envelope && typeof envelope === 'object' && 'data' in envelope && 'success' in envelope) {
+      return envelope.data;
+    }
+    return response.data;
+  },
   (error) => {
     // Handle common errors
     if (error.response?.status === 401) {

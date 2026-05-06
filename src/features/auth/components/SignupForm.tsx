@@ -24,7 +24,7 @@ export function SignupForm() {
   const form = useForm<RegisterFormData>({
     resolver: yupResolver(registerSchema),
     defaultValues: {
-      name: '',
+      fullName: '',
       email: '',
       password: '',
       confirmPassword: '',
@@ -33,7 +33,11 @@ export function SignupForm() {
 
   const onSubmit = async (data: RegisterFormData) => {
     try {
-      await register(data);
+      await register({
+        fullName: data.fullName,
+        email: data.email,
+        password: data.password,
+      });
     } catch (err) {
       // Error is handled by the slice
     }
@@ -51,7 +55,7 @@ export function SignupForm() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
             control={form.control}
-            name="name"
+            name="fullName"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Full Name</FormLabel>
