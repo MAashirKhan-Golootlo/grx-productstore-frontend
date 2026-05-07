@@ -4,6 +4,8 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useFieldArray } from 'react-hook-form';
 import { Product } from '@/types/product';
+import { Partner } from '@/types/partner';
+import { Tenant } from '@/types/tenant';
 import { OrderFormData, orderSchema } from '@/lib/validation/orderSchemas';
 import {
   Form,
@@ -27,10 +29,12 @@ import { Plus, Trash2 } from 'lucide-react';
 interface OrderFormProps {
   onSubmit: (data: OrderFormData) => void;
   products: Product[];
+  partners: Partner[];
+  tenants: Tenant[];
   isLoading?: boolean;
 }
 
-export function OrderForm({ onSubmit, products, isLoading }: OrderFormProps) {
+export function OrderForm({ onSubmit, products, partners, tenants, isLoading }: OrderFormProps) {
   const form = useForm<OrderFormData>({
     resolver: yupResolver(orderSchema) as any,
     defaultValues: {
@@ -54,10 +58,21 @@ export function OrderForm({ onSubmit, products, isLoading }: OrderFormProps) {
             name="tenantId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Tenant ID</FormLabel>
-                <FormControl>
-                  <Input placeholder="tenant-id" {...field} />
-                </FormControl>
+                <FormLabel>Tenant</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select tenant" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {tenants.map((tenant) => (
+                      <SelectItem key={tenant.id} value={tenant.id}>
+                        {tenant.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
@@ -67,10 +82,21 @@ export function OrderForm({ onSubmit, products, isLoading }: OrderFormProps) {
             name="partnerId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Partner ID</FormLabel>
-                <FormControl>
-                  <Input placeholder="partner-id" {...field} />
-                </FormControl>
+                <FormLabel>Partner</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select partner" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {partners.map((partner) => (
+                      <SelectItem key={partner.id} value={partner.id}>
+                        {partner.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
