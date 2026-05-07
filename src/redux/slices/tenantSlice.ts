@@ -1,6 +1,11 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { tenantService } from '@/lib/api/tenants/services/tenantService';
-import { CreateTenantDto, Tenant, UpdateTenantDto } from '@/types/tenant';
+import {
+  CreateTenantDto,
+  CreateTenantResponse,
+  Tenant,
+  UpdateTenantDto,
+} from '@/types/tenant';
 
 interface TenantState {
   items: Tenant[];
@@ -29,7 +34,7 @@ export const fetchTenants = createAsyncThunk(
 
 export const fetchTenantById = createAsyncThunk(
   'tenants/fetchById',
-  async (id: string, { rejectWithValue }) => {
+  async (id: number, { rejectWithValue }) => {
     try {
       return await tenantService.getById(id);
     } catch (error: any) {
@@ -40,7 +45,7 @@ export const fetchTenantById = createAsyncThunk(
 
 export const createTenant = createAsyncThunk(
   'tenants/create',
-  async (data: CreateTenantDto, { rejectWithValue }) => {
+  async (data: CreateTenantDto, { rejectWithValue }): Promise<CreateTenantResponse | any> => {
     try {
       return await tenantService.create(data);
     } catch (error: any) {
@@ -51,7 +56,7 @@ export const createTenant = createAsyncThunk(
 
 export const updateTenant = createAsyncThunk(
   'tenants/update',
-  async ({ id, data }: { id: string; data: UpdateTenantDto }, { rejectWithValue }) => {
+  async ({ id, data }: { id: number; data: UpdateTenantDto }, { rejectWithValue }) => {
     try {
       return await tenantService.update(id, data);
     } catch (error: any) {
@@ -91,7 +96,7 @@ const tenantSlice = createSlice({
         state.error = action.payload as string;
       })
       .addCase(createTenant.fulfilled, (state, action) => {
-        state.items.push(action.payload);
+        state.items.push(action.payload.tenant);
       })
       .addCase(updateTenant.fulfilled, (state, action) => {
         const index = state.items.findIndex((item) => item.id === action.payload.id);

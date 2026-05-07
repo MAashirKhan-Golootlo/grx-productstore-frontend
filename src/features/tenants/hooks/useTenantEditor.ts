@@ -5,7 +5,7 @@ import { fetchTenantById, updateTenant, createTenant } from '@/redux/slices/tena
 import { TenantFormData } from '@/lib/validation';
 import { useEffect } from 'react';
 
-export function useTenantEditor(id?: string) {
+export function useTenantEditor(id?: number) {
   const dispatch = useAppDispatch();
   const { selected: tenant, isLoading, error } = useAppSelector((state) => state.tenants);
 
