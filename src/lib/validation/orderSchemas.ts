@@ -26,6 +26,14 @@ export const orderItemSchema = yup.object().shape({
 export const orderSchema = yup.object().shape({
   tenantId: yup.string().required('Tenant ID is required'),
   partnerId: yup.string().required('Partner ID is required'),
+  customerId: yup.string().required('Customer ID is required'),
+  customerName: yup.string().trim().min(1, 'Customer name is required').required(),
+  customerPhone: yup.string().trim().min(1, 'Phone is required').required(),
+  customerEmail: yup
+    .string()
+    .trim()
+    .email('Valid email is required')
+    .required('Email is required'),
   items: yup
     .array()
     .of(orderItemSchema)

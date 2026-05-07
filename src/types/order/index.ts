@@ -1,5 +1,7 @@
 import type { Product } from '../product';
 import type { User } from '../auth';
+import type { Tenant } from '../tenant';
+import type { Partner } from '../partner';
 
 export enum OrderStatus {
   CREATED = 'created',
@@ -24,13 +26,19 @@ export interface Order {
   id: string;
   orderNo: string;
   orderNumber: string;
-  tenantId: string;
+  tenantId: number;
   partnerId: string;
   status: OrderStatus;
   items: OrderItem[];
   totalAmount: number;
   user?: User;
   shippingAddress?: string;
+  customerId?: string | null;
+  customerName?: string | null;
+  customerPhone?: string | null;
+  customerEmail?: string | null;
+  tenant?: Tenant;
+  partner?: Partner;
   createdAt: string;
   updatedAt: string;
 }
@@ -38,6 +46,10 @@ export interface Order {
 export interface CreateOrderDto {
   tenantId: string;
   partnerId: string;
+  customerId: string;
+  customerName: string;
+  customerPhone: string;
+  customerEmail: string;
   items: Array<{
     productId: string;
     quantity: number;

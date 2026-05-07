@@ -40,6 +40,10 @@ export function OrderForm({ onSubmit, products, partners, tenants, isLoading }: 
     defaultValues: {
       tenantId: '',
       partnerId: '',
+      customerId: '',
+      customerName: '',
+      customerPhone: '',
+      customerEmail: '',
       items: [{ productId: '', quantity: 1, unitPrice: 0 }],
     },
   });
@@ -101,6 +105,64 @@ export function OrderForm({ onSubmit, products, partners, tenants, isLoading }: 
               </FormItem>
             )}
           />
+        </div>
+
+        <div className="space-y-4">
+          <h3 className="text-sm font-medium">Customer</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="customerId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Customer ID</FormLabel>
+                  <FormControl>
+                    <Input placeholder="External / loyalty customer id" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="customerName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Full name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="customerPhone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Phone</FormLabel>
+                  <FormControl>
+                    <Input placeholder="+923001234567" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="customerEmail"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input type="email" placeholder="customer@example.com" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
         </div>
 
         <div className="space-y-3">

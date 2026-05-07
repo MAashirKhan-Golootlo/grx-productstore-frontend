@@ -1,7 +1,7 @@
 import axiosInstance from '../../axios.config';
 import { CreateOrderDto, Order, OrderStatus } from '@/types/order';
 
-const mapOrder = (item: Order): Order => ({
+const mapOrder = (item: Order & { tenant?: Order['tenant']; partner?: Order['partner'] }): Order => ({
   ...item,
   orderNumber: item.orderNo,
   totalAmount: item.items.reduce(
@@ -12,6 +12,8 @@ const mapOrder = (item: Order): Order => ({
     ...row,
     price: Number(row.unitPrice),
   })),
+  tenant: item.tenant,
+  partner: item.partner,
 });
 
 export const orderService = {
@@ -26,7 +28,16 @@ export const orderService = {
   },
 
   async create(data: CreateOrderDto): Promise<Order> {
-    const created = (await axiosInstance.post('/orders', data)) as unknown as Order;
+    const payload = {
+      tenantId: Number(data.tenantId),
+      partnerId: data.partnerId,
+      customerId: data.customerId,
+      customerName: data.customerName,
+      customerPhone: data.customerPhone,
+      customerEmail: data.customerEmail,
+      items: data.items,
+    };
+    const created = (await axiosInstance.post('/orders', payload)) as unknown as Order;
     return mapOrder(created);
   },
 

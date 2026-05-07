@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import Link from 'next/link';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { fetchOrderById, updateOrderStatus } from '@/redux/slices/orderSlice';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,9 +13,11 @@ import {
   SelectTrigger, 
   SelectValue 
 } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
 import { OrderStatus } from '@/types/order';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Separator } from '@/components/ui/separator';
+import { ArrowLeft } from 'lucide-react';
 
 export function OrderDetailsPage() {
   const { id } = useParams() as { id: string };
@@ -53,8 +56,14 @@ export function OrderDetailsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="space-y-2">
+          <Button variant="ghost" size="sm" className="-ml-2 w-fit gap-1 px-2" asChild>
+            <Link href="/orders">
+              <ArrowLeft className="h-4 w-4" />
+              Back to orders
+            </Link>
+          </Button>
           <h1 className="text-3xl font-bold tracking-tight">Order #{order.orderNumber}</h1>
           <p className="text-muted-foreground">Placed on {new Date(order.createdAt).toLocaleString()}</p>
         </div>
@@ -107,16 +116,88 @@ export function OrderDetailsPage() {
         <div className="space-y-6">
           <Card>
             <CardHeader>
+              <CardTitle>Tenant</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm">
+              {order.tenant ? (
+                <>
+                  <div>
+                    <p className="font-medium text-muted-foreground">ID</p>
+                    <p>{order.tenant.id}</p>
+                  </div>
+                  <div>
+                    <p className="font-medium text-muted-foreground">Code</p>
+                    <p>{order.tenant.code}</p>
+                  </div>
+                  <div>
+                    <p className="font-medium text-muted-foreground">Name</p>
+                    <p>{order.tenant.name}</p>
+                  </div>
+                  <div>
+                    <p className="font-medium text-muted-foreground">Status</p>
+                    <p>{order.tenant.status}</p>
+                  </div>
+                </>
+              ) : (
+                <p className="text-muted-foreground">Tenant ID: {order.tenantId}</p>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Partner</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm">
+              {order.partner ? (
+                <>
+                  <div>
+                    <p className="font-medium text-muted-foreground">ID</p>
+                    <p className="break-all">{order.partner.id}</p>
+                  </div>
+                  <div>
+                    <p className="font-medium text-muted-foreground">Code</p>
+                    <p>{order.partner.code}</p>
+                  </div>
+                  <div>
+                    <p className="font-medium text-muted-foreground">Name</p>
+                    <p>{order.partner.name}</p>
+                  </div>
+                  <div>
+                    <p className="font-medium text-muted-foreground">Contact email</p>
+                    <p>{order.partner.contactEmail}</p>
+                  </div>
+                  <div>
+                    <p className="font-medium text-muted-foreground">Status</p>
+                    <p>{order.partner.status}</p>
+                  </div>
+                </>
+              ) : (
+                <p className="text-muted-foreground">Partner ID: {order.partnerId}</p>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
               <CardTitle>Customer Information</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
+                <p className="text-sm font-medium text-muted-foreground">Customer ID</p>
+                <p>{order.customerId || 'N/A'}</p>
+              </div>
+              <div>
                 <p className="text-sm font-medium text-muted-foreground">Name</p>
-                <p>{order.user?.name || 'N/A'}</p>
+                <p>{order.customerName || order.user?.name || 'N/A'}</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Phone</p>
+                <p>{order.customerPhone || 'N/A'}</p>
               </div>
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Email</p>
-                <p>{order.user?.email || 'N/A'}</p>
+                <p>{order.customerEmail || order.user?.email || 'N/A'}</p>
               </div>
             </CardContent>
           </Card>
@@ -126,7 +207,9 @@ export function OrderDetailsPage() {
               <CardTitle>Shipping Address</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm">{order.shippingAddress}</p>
+              <p className="text-sm text-muted-foreground">
+                {order.shippingAddress?.trim() || 'N/A'}
+              </p>
             </CardContent>
           </Card>
         </div>
