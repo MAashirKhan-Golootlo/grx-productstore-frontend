@@ -1,5 +1,4 @@
 import * as yup from 'yup';
-import { UserRole } from '@/types/user';
 
 export const userSchema = yup.object().shape({
   name: yup
@@ -10,10 +9,6 @@ export const userSchema = yup.object().shape({
     .string()
     .email('Invalid email address')
     .required('Email is required'),
-  role: yup
-    .mixed<UserRole>()
-    .oneOf(Object.values(UserRole))
-    .required('Role is required'),
   password: yup
     .string()
     .min(6, 'Password must be at least 6 characters')

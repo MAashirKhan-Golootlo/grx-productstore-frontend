@@ -14,14 +14,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { UserRole } from '@/types/user';
 
 interface UserFormProps {
   onSubmit: (data: UserFormData) => void;
@@ -37,7 +29,6 @@ export function UserForm({ onSubmit, initialData, isLoading, isEdit = false }: U
     defaultValues: {
       name: initialData?.name || '',
       email: initialData?.email || '',
-      role: initialData?.role || UserRole.CUSTOMER,
       isActive: initialData?.isActive ?? true,
       password: '',
     },
@@ -72,31 +63,7 @@ export function UserForm({ onSubmit, initialData, isLoading, isEdit = false }: U
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="role"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Role</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a role" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {Object.values(UserRole).map((role) => (
-                    <SelectItem key={role} value={role}>
-                      {role}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
+
         {!isEdit && (
           <FormField
             control={form.control}

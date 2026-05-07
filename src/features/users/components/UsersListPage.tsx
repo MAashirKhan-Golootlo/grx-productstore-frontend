@@ -53,7 +53,6 @@ export function UsersListPage() {
                 <TableRow>
                   <TableHead>Name</TableHead>
                   <TableHead>Email</TableHead>
-                  <TableHead>Role</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="w-[80px]">Actions</TableHead>
                 </TableRow>
@@ -63,9 +62,6 @@ export function UsersListPage() {
                   <TableRow key={user.id}>
                     <TableCell className="font-medium">{user.name}</TableCell>
                     <TableCell>{user.email}</TableCell>
-                    <TableCell>
-                      <Badge variant="secondary">{user.role}</Badge>
-                    </TableCell>
                     <TableCell>
                       <Badge variant={user.isActive ? 'secondary' : 'outline'}>
                         {user.isActive ? 'active' : 'inactive'}
