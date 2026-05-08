@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { CreateTenantResponse } from '@/types/tenant';
+import { BackButton } from '@/components/common';
 
 export function TenantCreatePage() {
   const router = useRouter();

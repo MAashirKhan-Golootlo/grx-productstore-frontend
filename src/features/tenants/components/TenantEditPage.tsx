@@ -10,6 +10,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { tenantService } from '@/lib/api/tenants/services/tenantService';
 import { TenantIntegrationCredentials } from '@/types/tenant';
+import { BackButton } from '@/components/common';
 
 export function TenantEditPage() {
   const router = useRouter();
