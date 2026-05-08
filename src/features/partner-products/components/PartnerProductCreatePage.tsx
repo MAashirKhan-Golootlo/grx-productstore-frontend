@@ -5,6 +5,7 @@ import { PartnerProductForm, usePartnerProductEditor } from '@/features/partner-
 import { PartnerProductFormData } from '@/lib/validation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { BackButton } from '@/components/common';
 
 export function PartnerProductCreatePage() {
   const router = useRouter();
@@ -22,13 +23,7 @@ export function PartnerProductCreatePage() {
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <div className="space-y-2">
-        <button
-          type="button"
-          onClick={() => router.back()}
-          className="text-sm text-muted-foreground hover:text-foreground"
-        >
-          ← Back
-        </button>
+        <BackButton fallbackHref="/partner-products" />
         <h1 className="text-3xl font-bold tracking-tight">Create Partner Product</h1>
       </div>
 
