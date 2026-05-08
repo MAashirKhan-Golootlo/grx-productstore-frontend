@@ -6,6 +6,7 @@ import { ProductFormData } from '@/lib/validation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
+import { BackButton } from '@/components/common';
 
 export function ProductEditPage() {
   const router = useRouter();
@@ -49,13 +50,7 @@ export function ProductEditPage() {
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <div className="space-y-2">
-        <button
-          type="button"
-          onClick={() => router.back()}
-          className="text-sm text-muted-foreground hover:text-foreground"
-        >
-          ← Back
-        </button>
+        <BackButton fallbackHref="/products" />
         <h1 className="text-3xl font-bold tracking-tight">Edit Product</h1>
       </div>
       

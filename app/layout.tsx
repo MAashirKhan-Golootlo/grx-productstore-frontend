@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ReduxProvider } from "@/redux";
 import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
 
 export const metadata: Metadata = {
   title: "ProductStore",
@@ -20,7 +19,6 @@ export default function RootLayout({
         <ReduxProvider>
           <Header />
           {children}
-          <Footer />
         </ReduxProvider>
       </body>
     </html>
