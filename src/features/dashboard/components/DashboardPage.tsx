@@ -89,7 +89,7 @@ export function DashboardPage() {
               <stat.icon className={`h-4 w-4 ${stat.color}`} />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
+              <div className="text-2xl font-bold">{stat.value.toLocaleString('en-US')}</div>
               <p className="text-xs text-muted-foreground">{stat.description}</p>
             </CardContent>
           </Card>
@@ -101,7 +101,7 @@ export function DashboardPage() {
           <CardHeader>
             <CardTitle>Recent Orders</CardTitle>
             <CardDescription>
-              You have {orders.length} total orders.
+              You have {orders.length.toLocaleString('en-US')} total orders.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -115,7 +115,7 @@ export function DashboardPage() {
                         {order.status} • {new Date(order.createdAt).toLocaleDateString()}
                       </p>
                     </div>
-                    <div className="ml-auto font-medium">+PKR{order.totalAmount}</div>
+                    <div className="ml-auto font-medium">+PKR {Number(order.totalAmount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                   </div>
                 ))
               ) : (

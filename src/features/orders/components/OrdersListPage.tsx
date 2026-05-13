@@ -64,7 +64,7 @@ export function OrdersListPage() {
                   <TableRow key={order.id}>
                     <TableCell className="font-medium">{order.orderNumber}</TableCell>
                     <TableCell>{order.items.length}</TableCell>
-                    <TableCell>${order.totalAmount.toFixed(2)}</TableCell>
+                    <TableCell>PKR {Number(order.totalAmount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
                     <TableCell>
                       <Badge variant="secondary">{order.status}</Badge>
                     </TableCell>

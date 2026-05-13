@@ -76,7 +76,7 @@ export function PartnerProductsListPage() {
                     <TableCell>{mapping.product?.name || mapping.productId}</TableCell>
                     <TableCell>{mapping.tenant?.name || '-'}</TableCell>
                     <TableCell>
-                      {mapping.availableStock} / {mapping.allocatedStock}
+                      {mapping.availableStock.toLocaleString('en-US')} / {mapping.allocatedStock.toLocaleString('en-US')}
                     </TableCell>
                     <TableCell>
                       {mapping.currency}{' '}

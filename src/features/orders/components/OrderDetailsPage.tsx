@@ -98,16 +98,16 @@ export function OrderDetailsPage() {
                     </div>
                     <div>
                       <p className="font-medium">{item.product?.name || 'Unknown Product'}</p>
-                      <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
+                      <p className="text-sm text-muted-foreground">Qty: {item.quantity.toLocaleString('en-US')}</p>
                     </div>
                   </div>
-                  <p className="font-medium">${(item.price * item.quantity).toFixed(2)}</p>
+                  <p className="font-medium">PKR {(item.price * item.quantity).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                 </div>
               ))}
               <Separator />
               <div className="flex justify-between font-bold text-lg">
                 <span>Total</span>
-                <span>${order.totalAmount.toFixed(2)}</span>
+                <span>PKR {Number(order.totalAmount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
               </div>
             </div>
           </CardContent>
