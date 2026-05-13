@@ -119,7 +119,10 @@ export function ProductForm({ onSubmit, categories, initialData, isLoading }: Pr
                     step="0.01" 
                     placeholder="999.99" 
                     {...field} 
-                    onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      field.onChange(value === '' ? '' : Number(value));
+                    }}
                   />
                 </FormControl>
                 <FormMessage />

@@ -22,7 +22,11 @@ export const productSchema = yup.object().shape({
     .required('Currency is required'),
   categoryId: yup.string().required('Category is required'),
   description: yup.string().max(500, 'Description must be at most 500 characters').optional(),
-  imageUrl: yup.string().url('Image URL must be valid').optional(),
+  imageUrl: yup
+    .string()
+    .transform((value) => (value?.trim() === '' ? undefined : value))
+    .url('Image URL must be valid')
+    .optional(),
 });
 
 export type ProductFormData = yup.InferType<typeof productSchema>;
