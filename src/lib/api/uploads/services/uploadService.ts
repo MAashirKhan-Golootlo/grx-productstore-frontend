@@ -10,6 +10,8 @@ export const uploadService = {
     const formData = new FormData();
     formData.append('file', file);
 
-    return (await axiosInstance.post('/uploads/image', formData)) as unknown as UploadImageResponse;
+    return (await axiosInstance.post('/uploads/image', formData, {
+      headers: { 'Content-Type': undefined },
+    })) as unknown as UploadImageResponse;
   },
 };

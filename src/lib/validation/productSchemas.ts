@@ -13,7 +13,7 @@ export const productSchema = yup.object().shape({
   price: yup
     .number()
     .typeError('Price must be a number')
-    .positive('Price must be positive')
+    .min(0, 'Price must be 0 or greater')
     .required('Price is required'),
   currency: yup
     .string()
@@ -25,7 +25,6 @@ export const productSchema = yup.object().shape({
   imageUrl: yup
     .string()
     .transform((value) => (value?.trim() === '' ? undefined : value))
-    .url('Image URL must be valid')
     .optional(),
 });
 
