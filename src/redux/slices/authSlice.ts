@@ -25,11 +25,12 @@ const clearSessionCookie = (): void => {
   document.cookie = `${SESSION_COOKIE_KEY}=; path=/; max-age=0; samesite=lax`;
 };
 
-const initialState: AuthState & { error: string | null } = {
+const initialState: AuthState & { error: string | null; isHydrated: boolean } = {
   user: null,
   token: null,
   isAuthenticated: false,
   isLoading: false,
+  isHydrated: false,
   error: null,
 };
 
@@ -79,7 +80,12 @@ const authSlice = createSlice({
         state.user = userStr ? JSON.parse(userStr) : null;
         state.isAuthenticated = true;
         setSessionCookie(token);
+      } else {
+        // Stale cookie but no localStorage token — clear the cookie so
+        // middleware stops redirecting /login → / and breaking the auth loop.
+        clearSessionCookie();
       }
+      state.isHydrated = true;
     },
     clearError(state) {
       state.error = null;

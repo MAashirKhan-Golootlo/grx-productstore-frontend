@@ -112,7 +112,7 @@ export function ProductForm({ onSubmit, categories, initialData, isLoading }: Pr
             name="price"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Price ($)</FormLabel>
+                <FormLabel>Price</FormLabel>
                 <FormControl>
                   <Input 
                     type="number" 
@@ -159,7 +159,7 @@ export function ProductForm({ onSubmit, categories, initialData, isLoading }: Pr
           render={({ field }) => (
             <FormItem>
               <FormLabel>Category</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a category" />

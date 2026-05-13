@@ -115,7 +115,7 @@ export function DashboardPage() {
                         {order.status} • {new Date(order.createdAt).toLocaleDateString()}
                       </p>
                     </div>
-                    <div className="ml-auto font-medium">+${order.totalAmount}</div>
+                    <div className="ml-auto font-medium">+PKR{order.totalAmount}</div>
                   </div>
                 ))
               ) : (
