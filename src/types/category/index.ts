@@ -4,6 +4,7 @@ export interface Category {
   id: string;
   slug: string;
   name: string;
+  imageUrl?: string;
   status: RecordStatus;
   description?: string;
   isActive?: boolean;
@@ -15,6 +16,7 @@ export interface Category {
 export interface CreateCategoryDto {
   slug: string;
   name: string;
+  imageUrl?: string;
 }
 
 export interface UpdateCategoryDto extends Partial<CreateCategoryDto> {}

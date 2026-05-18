@@ -58,13 +58,14 @@ export function CategoryEditPage() {
         </CardHeader>
         <CardContent>
           {category && (
-            <CategoryForm 
-              onSubmit={onSubmit} 
-              isLoading={isSubmitting} 
+            <CategoryForm
+              onSubmit={onSubmit}
+              isLoading={isSubmitting}
               initialData={{
                 name: category.name,
                 slug: category.slug,
-              }} 
+                imageUrl: category.imageUrl,
+              }}
             />
           )}
         </CardContent>

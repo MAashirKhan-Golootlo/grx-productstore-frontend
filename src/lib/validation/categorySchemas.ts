@@ -11,6 +11,7 @@ export const categorySchema = yup.object().shape({
     .min(2, 'Slug must be at least 2 characters')
     .matches(/^[a-z0-9-]+$/, 'Slug must only contain lowercase letters, numbers, and hyphens')
     .required('Slug is required'),
+  imageUrl: yup.string().optional(),
 });
 
 export type CategoryFormData = yup.InferType<typeof categorySchema>;

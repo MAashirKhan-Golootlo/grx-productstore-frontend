@@ -22,6 +22,7 @@ export const categoryService = {
     const payload = {
       slug: data.slug,
       name: data.name,
+      imageUrl: data.imageUrl,
     };
     const created = (await axiosInstance.post('/categories', payload)) as unknown as Category;
     return {
@@ -34,6 +35,7 @@ export const categoryService = {
     const payload = {
       slug: data.slug,
       name: data.name,
+      imageUrl: data.imageUrl,
     };
     const updated = (await axiosInstance.patch(`/categories/${id}`, payload)) as unknown as Category;
     return {
