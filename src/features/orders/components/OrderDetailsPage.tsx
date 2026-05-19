@@ -6,18 +6,19 @@ import Link from 'next/link';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { fetchOrderById, updateOrderStatus } from '@/redux/slices/orderSlice';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { OrderStatus } from '@/types/order';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Separator } from '@/components/ui/separator';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ImageOff } from 'lucide-react';
+import { resolveMediaUrl } from '@/lib/utils';
 
 export function OrderDetailsPage() {
   const { id } = useParams() as { id: string };
@@ -40,12 +41,20 @@ export function OrderDetailsPage() {
         <Skeleton className="h-10 w-48" />
         <div className="grid gap-6 md:grid-cols-3">
           <Card className="md:col-span-2">
-            <CardHeader><Skeleton className="h-6 w-32" /></CardHeader>
-            <CardContent><Skeleton className="h-48 w-full" /></CardContent>
+            <CardHeader>
+              <Skeleton className="h-6 w-32" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-48 w-full" />
+            </CardContent>
           </Card>
           <Card>
-            <CardHeader><Skeleton className="h-6 w-32" /></CardHeader>
-            <CardContent><Skeleton className="h-48 w-full" /></CardContent>
+            <CardHeader>
+              <Skeleton className="h-6 w-32" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-48 w-full" />
+            </CardContent>
           </Card>
         </div>
       </div>
@@ -65,7 +74,9 @@ export function OrderDetailsPage() {
             </Link>
           </Button>
           <h1 className="text-3xl font-bold tracking-tight">Order #{order.orderNumber}</h1>
-          <p className="text-muted-foreground">Placed on {new Date(order.createdAt).toLocaleString()}</p>
+          <p className="text-muted-foreground">
+            Placed on {new Date(order.createdAt).toLocaleString()}
+          </p>
         </div>
         <div className="flex items-center space-x-4">
           <Select onValueChange={handleStatusChange} defaultValue={order.status}>
@@ -90,24 +101,55 @@ export function OrderDetailsPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {order.items.map((item) => (
-                <div key={item.id} className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <div className="h-12 w-12 rounded bg-muted flex items-center justify-center">
-                      <span className="text-xs font-bold">IMG</span>
+              {order.items.map((item) => {
+                const imageSrc = resolveMediaUrl(item.product?.imageUrl);
+                return (
+                  <div key={item.id} className="flex items-center justify-between gap-4">
+                    <div className="flex min-w-0 items-center space-x-4">
+                      {imageSrc ? (
+                        <img
+                          src={imageSrc}
+                          alt={item.product?.name ?? 'Product'}
+                          className="h-14 w-14 shrink-0 rounded-md border object-cover"
+                        />
+                      ) : (
+                        <div
+                          className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md border bg-muted"
+                          aria-hidden
+                        >
+                          <ImageOff className="h-5 w-5 text-muted-foreground" />
+                        </div>
+                      )}
+                      <div className="min-w-0">
+                        <p className="font-medium">{item.product?.name || 'Unknown Product'}</p>
+                        {item.product?.sku ? (
+                          <p className="text-xs text-muted-foreground">SKU: {item.product.sku}</p>
+                        ) : null}
+                        <p className="text-sm text-muted-foreground">
+                          Qty: {item.quantity.toLocaleString('en-US')}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-medium">{item.product?.name || 'Unknown Product'}</p>
-                      <p className="text-sm text-muted-foreground">Qty: {item.quantity.toLocaleString('en-US')}</p>
-                    </div>
+                    <p className="shrink-0 font-medium">
+                      PKR{' '}
+                      {(item.price * item.quantity).toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </p>
                   </div>
-                  <p className="font-medium">PKR {(item.price * item.quantity).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                </div>
-              ))}
+                );
+              })}
               <Separator />
-              <div className="flex justify-between font-bold text-lg">
+              <div className="flex justify-between text-lg font-bold">
                 <span>Total</span>
-                <span>PKR {Number(order.totalAmount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                <span>
+                  PKR{' '}
+                  {Number(order.totalAmount).toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                </span>
               </div>
             </div>
           </CardContent>

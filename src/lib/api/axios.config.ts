@@ -27,6 +27,9 @@ axiosInstance.interceptors.request.use(
 // Response interceptor
 axiosInstance.interceptors.response.use(
   (response) => {
+    if (response.config.responseType === 'blob') {
+      return response;
+    }
     const envelope = response.data as ApiResponse<unknown>;
     if (envelope && typeof envelope === 'object' && 'data' in envelope && 'success' in envelope) {
       return envelope.data;

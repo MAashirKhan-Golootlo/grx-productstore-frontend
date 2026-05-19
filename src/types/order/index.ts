@@ -56,3 +56,11 @@ export interface CreateOrderDto {
     unitPrice: number;
   }>;
 }
+
+export interface ListOrdersParams {
+  page?: number;
+  limit?: number;
+  tenantId?: number;
+  partnerId?: string;
+  orderNo?: string;
+}
