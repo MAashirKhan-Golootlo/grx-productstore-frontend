@@ -71,7 +71,7 @@ export function OrderForm({ onSubmit, products, partners, tenants, isLoading }: 
                   </FormControl>
                   <SelectContent>
                     {tenants.map((tenant) => (
-                      <SelectItem key={tenant.id} value={tenant.id}>
+                      <SelectItem key={tenant.id} value={String(tenant.id)}>
                         {tenant.name}
                       </SelectItem>
                     ))}

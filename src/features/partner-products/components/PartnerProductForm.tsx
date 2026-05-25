@@ -121,7 +121,7 @@ export function PartnerProductForm({
                 <SelectContent>
                   <SelectItem value="__none__">No tenant</SelectItem>
                   {tenants.map((tenant) => (
-                    <SelectItem key={tenant.id} value={tenant.id}>
+                    <SelectItem key={tenant.id} value={String(tenant.id)}>
                       {tenant.name}
                     </SelectItem>
                   ))}
